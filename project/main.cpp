@@ -121,7 +121,6 @@ int main()
         mvprintw(27, 0, "-----------------------------------------------------------------");
         
         for (int i = 0; i < BARS; i += 4) {
-            // Частота бина
             float freq = (i * sample_rate) / (float)FFT_SIZE;
             int x_pos = i*2 + 1;
             
