@@ -1,0 +1,3 @@
+/Users/nikitamaslov/Desktop/project/project/build/CMakeFiles/MiptPlayer.dir
+/Users/nikitamaslov/Desktop/project/project/build/CMakeFiles/edit_cache.dir
+/Users/nikitamaslov/Desktop/project/project/build/CMakeFiles/rebuild_cache.dir
