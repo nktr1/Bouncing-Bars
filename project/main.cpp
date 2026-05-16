@@ -10,7 +10,7 @@
 #include <optional>
 
 #define FFT_SIZE 1024
-#define BARS 60
+#define BARS 75
 
 double fft_in[FFT_SIZE];
 fftw_complex fft_out[FFT_SIZE/2 + 1];
@@ -74,12 +74,9 @@ void data_callback(
 
         for(int i=0;i<FFT_SIZE;i++)
         {
-            double w=
-            0.5*(1-cos(
-            2*M_PI*i/FFT_SIZE));
+            double w=0.5*(1-cos(2*M_PI*i/FFT_SIZE));
 
-            fft_in[i]=
-                temp_buffer[i]*w;
+            fft_in[i]=temp_buffer[i]*w;
         }
 
         fftw_execute(plan);
@@ -122,52 +119,34 @@ int main()
 
     ma_decoder decoder;
 
-    if(ma_decoder_init_file(
-        "track.mp3",
-        NULL,
-        &decoder)!=MA_SUCCESS)
+    if(ma_decoder_init_file("track.mp3",NULL,&decoder)!=MA_SUCCESS)
     {
         printf("track.mp3 not found\n");
         return 1;
     }
 
-    ma_device_config config=
-    ma_device_config_init(
-    ma_device_type_playback);
+    ma_device_config config=ma_device_config_init(ma_device_type_playback);
 
-    config.playback.format=
-        decoder.outputFormat;
+    config.playback.format=decoder.outputFormat;
 
-    config.playback.channels=
-        decoder.outputChannels;
+    config.playback.channels=decoder.outputChannels;
 
-    config.sampleRate=
-        decoder.outputSampleRate;
+    config.sampleRate=decoder.outputSampleRate;
 
-    config.dataCallback=
-        data_callback;
+    config.dataCallback=data_callback;
 
-    config.pUserData=
-        &decoder;
+    config.pUserData=&decoder;
 
     ma_device device;
 
-    if(ma_device_init(
-        NULL,
-        &config,
-        &device)!=MA_SUCCESS)
+    if(ma_device_init(NULL,&config,&device)!=MA_SUCCESS)
     {
         return 1;
     }
 
     ma_device_start(&device);
 
-    sf::RenderWindow window(
-        sf::VideoMode(
-            sf::Vector2u(1400,800)
-        ),
-        "FFT Visualizer"
-    );
+    sf::RenderWindow window(sf::VideoMode(sf::Vector2u(1400,800)),"FFT Visualizer");
 
     window.setFramerateLimit(60);
 
@@ -195,51 +174,33 @@ int main()
             }
         }
 
-        window.clear(
-            sf::Color(15,15,20));
+        window.clear(sf::Color(15,15,20));
 
         for(int i=0;i<BARS;i++)
         {
-            float value=
-                visual_spectrum[i];
+            float value=visual_spectrum[i];
 
-            value=
-            log10(value*90+1)*250;
+            value=log10(value*90+1)*250;
 
-            if(value>700)
-                value=700;
+            if(value>700)value=700;
 
-            smooth[i]+=
-            (value-smooth[i])*0.2f;
+            smooth[i]+=(value-smooth[i])*0.2f;
 
             float h=smooth[i];
 
             sf::RectangleShape bar;
 
-            bar.setSize({
-                width-4,
-                h
-            });
+            bar.setSize({width-4,h});
 
-            bar.setPosition({
-                i*width,
-                780-h
-            });
+            bar.setPosition({i*width,780-h});
 
-            int r=
-            std::min(
-                255,
-                (int)(50+h/3));
+            int r=std::min(255,(int)(50+h/3));
 
-            int g=
-            std::min(
-                255,
-                (int)(100+h/2));
+            int g = std::min(255,(int)(100+h/2));
 
             int b=255;
 
-            bar.setFillColor(
-            sf::Color(r,g,b));
+            bar.setFillColor(sf::Color(r,g,b));
 
             window.draw(bar);
         }
